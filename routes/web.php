@@ -14,11 +14,17 @@
 /*
 Route::get('/', 'TasksController@index');
 
-Route::resource('tasks', 'TasksController');
-*/
-
 Route::get('/', function () {
     return view('welcome');
+});
+*/
+
+Route::get('/', 'TasksController@index');
+
+// ユーザ機能
+Route::group(['middleware' => 'auth'], function () {
+    Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);
+    Route::resource('tasks', 'TasksController', ['only' => ['store', 'destroy']]);
 });
 
 // ユーザ登録
