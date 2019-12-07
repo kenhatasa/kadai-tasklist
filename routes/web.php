@@ -13,18 +13,32 @@
 
 /*
 Route::get('/', 'TasksController@index');
-
-Route::get('/', function () {
-    return view('welcome');
-});
 */
 
-Route::get('/', 'TasksController@index');
+
+Route::get('/', function () {
+    
+    $data = [];
+    if (\Auth::check()) {
+        
+        $user = \Auth::user();
+        $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+            
+        $data = [
+            'user' => $user,
+            'tasks' => $tasks,
+        ];
+    }
+    
+    return view('welcome', $data);
+});
+
+/*Route::get('/', 'TasksController@index');*/
 
 // ユーザ機能
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);
-    Route::resource('tasks', 'TasksController', ['only' => ['store', 'destroy']]);
+    Route::resource('tasks', 'TasksController', ['only' => ['store','edit','update','destroy']]);
 });
 
 // ユーザ登録
